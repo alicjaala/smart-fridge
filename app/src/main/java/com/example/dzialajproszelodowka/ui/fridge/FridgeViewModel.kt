@@ -18,7 +18,7 @@ class FridgeViewModel(private val repository: ProductRepository): ViewModel() {
     //stateFlow - przechowuje ostatnią wartość aktualnej listy produktów
     // konwersja allProducts na stateflow
     val allProduct: StateFlow<List<Product>> = repository.allProducts.catch {
-        e -> // tu dodać błąd pobierania danych
+            e -> // tu dodać błąd pobierania danych
     }.stateIn(
         scope = viewModelScope,     // zarządza cyklem zadań, anuluje je, kiedy viewModel jest niszczony
         started = kotlinx.coroutines.flow.SharingStarted.WhileSubscribed(5000),

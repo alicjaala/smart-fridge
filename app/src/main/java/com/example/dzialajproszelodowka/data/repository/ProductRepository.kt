@@ -4,25 +4,36 @@ import com.example.dzialajproszelodowka.data.db.ProductDao
 import com.example.dzialajproszelodowka.data.model.Product
 import kotlinx.coroutines.flow.Flow
 
-// podczas tworzenia repozytorium podajemu mu instancję productDao, private val automatycznie
-// robi z niego pole klasy
-class ProductRepository(private val productDao: ProductDao) {
 
-    val allProducts: Flow<List<Product>> = productDao.getAllProducts()
+open class ProductRepository(private val productDao: ProductDao) {
 
+    open val allProducts: Flow<List<Product>> = productDao.getAllProducts()
+
+    /**
+     * Funkcja wstawiania produktu. Wywołuje funkcję 'suspend' z DAO.
+     */
+    // ZMIANA NAZWY:
+    suspend fun insertProduct(product: Product) {
+        // ZMIANA WYWOŁANIA:
+        productDao.insertProduct(product)
+    }
+
+    /**
+     * Funkcja usuwania produktu. Wywołuje funkcję 'suspend' z DAO.
+     */
+    // ZMIANA NAZWY:
+    suspend fun deleteProduct(product: Product) {
+        // ZMIANA WYWOŁANIA:
+        productDao.deleteProduct(product)
+    }
+
+    // Funkcja z Twojego starego DAO (może się przydać)
     fun getProductByName(name: String): Flow<Product?> {
         return productDao.getProductByName(name)
     }
 
-    suspend fun insertProduct(product: Product) {
-        productDao.insertProduct(product)
-    }
-
-    suspend fun updateProduct(product: Product) {
-        productDao.updateProduct(product)
-    }
-
-    suspend fun deleteProduct(product: Product) {
-        productDao.deleteProduct(product)
+    // Funkcja z Twojego starego DAO (może się przydać)
+    suspend fun update(product: Product) {
+        productDao.update(product)
     }
 }
