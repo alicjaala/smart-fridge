@@ -18,6 +18,7 @@ import com.example.dzialajproszelodowka.ui.fridge.FridgeListScreen
 import com.example.dzialajproszelodowka.ui.fridge.FridgeViewModel
 import com.example.dzialajproszelodowka.ui.fridge.FridgeViewModelFactory
 import com.example.dzialajproszelodowka.ui.menu.MainMenuScreen
+import com.example.dzialajproszelodowka.ui.shopping.ShoppingListDetailsScreen
 import com.example.dzialajproszelodowka.ui.shopping.ShoppingListsScreen // <-- Ekran List Zakupów
 import com.example.dzialajproszelodowka.ui.shopping.ShoppingViewModel // <-- ViewModel List Zakupów
 import com.example.dzialajproszelodowka.ui.shopping.ShoppingViewModelFactory // <-- Factory List Zakupów
@@ -90,10 +91,9 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun SmartFridgeApp(
     fridgeViewModel: FridgeViewModel,
-    shoppingViewModel: ShoppingViewModel // Parametr dla Listy Zakupów
+    shoppingViewModel: ShoppingViewModel
 ) {
     var currentScreen by remember { mutableStateOf("Start") }
-
     val context = LocalContext.current
 
     Surface(
@@ -101,29 +101,26 @@ fun SmartFridgeApp(
         color = Color(0xFFFCEEEE)
     ) {
         when (currentScreen) {
+            // 1. START
             "Start" -> {
-                StartScreen(
-                    onNavigateToMenu = { currentScreen = "Menu" }
-                )
+                StartScreen(onNavigateToMenu = { currentScreen = "Menu" })
             }
 
+            // 2. MENU
             "Menu" -> {
                 MainMenuScreen(
-                    onNavigateToFridge = {
-                        currentScreen = "FridgeList"
-                    },
-                    onNavigateToShoppingList = {
-                        currentScreen = "ShoppingLists"
-                    },
+                    onNavigateToFridge = { currentScreen = "FridgeList" },
+                    onNavigateToShoppingList = { currentScreen = "ShoppingLists" },
                     onNavigateToRecipe = {
                         Toast.makeText(context, "TODO: Znajdź Przepis", Toast.LENGTH_SHORT).show()
                     },
-                    onNavigateToAddProduct = {
+                    onNavigateToProduct = {
                         Toast.makeText(context, "TODO: Dodaj Produkt", Toast.LENGTH_SHORT).show()
                     }
                 )
             }
 
+            // 3. LODÓWKA (Lista)
             "FridgeList" -> {
                 FridgeListScreen(
                     viewModel = fridgeViewModel,
@@ -131,10 +128,24 @@ fun SmartFridgeApp(
                 )
             }
 
+            // 4. LISTY ZAKUPÓW (Wybór listy)
             "ShoppingLists" -> {
                 ShoppingListsScreen(
                     viewModel = shoppingViewModel,
-                    onNavigateBack = { currentScreen = "Menu" }
+                    onNavigateBack = { currentScreen = "Menu" },
+                    // NOWOŚĆ: Kliknięcie w listę przenosi do szczegółów
+                    onListClick = { listId ->
+                        shoppingViewModel.selectList(listId) // Ustawiamy wybraną listę w ViewModel
+                        currentScreen = "ShoppingDetails" // Zmieniamy ekran
+                    }
+                )
+            }
+
+            // 5. SZCZEGÓŁY LISTY ZAKUPÓW (Nowy ekran)
+            "ShoppingDetails" -> {
+                ShoppingListDetailsScreen(
+                    viewModel = shoppingViewModel,
+                    onNavigateBack = { currentScreen = "ShoppingLists" }
                 )
             }
         }

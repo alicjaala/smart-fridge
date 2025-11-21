@@ -2,7 +2,6 @@ package com.example.dzialajproszelodowka.ui.menu
 
 import android.widget.Toast
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -17,7 +16,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.LineHeightStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -28,7 +26,7 @@ fun MainMenuScreen(
     onNavigateToFridge: () -> Unit,
     onNavigateToShoppingList: () -> Unit,
     onNavigateToRecipe: () -> Unit,
-    onNavigateToAddProduct: () -> Unit
+    onNavigateToProduct: () -> Unit
 ) {
     Surface(
         modifier = Modifier.fillMaxSize(),
@@ -49,7 +47,7 @@ fun MainMenuScreen(
 
             MenuButton(
                 text = "Check what's in your fridge.",
-                icon = Icons.Default.Kitchen,
+                icon = Icons.Filled.Kitchen,
                 onClick = onNavigateToFridge
             )
 
@@ -57,7 +55,7 @@ fun MainMenuScreen(
 
             MenuButton(
                 text = "Make a shopping list.",
-                icon = Icons.Default.ShoppingCart,
+                icon = Icons.Filled.ShoppingCart,
                 onClick = onNavigateToShoppingList
             )
 
@@ -65,7 +63,7 @@ fun MainMenuScreen(
 
             MenuButton(
                 text = "Find a recipe.",
-                icon = Icons.Default.RestaurantMenu,
+                icon = Icons.Filled.RestaurantMenu,
                 onClick = onNavigateToRecipe
             )
 
@@ -73,8 +71,8 @@ fun MainMenuScreen(
 
             MenuButton(
                 text = "Add new product.",
-                icon = Icons.Default.Add,
-                onClick = onNavigateToAddProduct
+                icon = Icons.Filled.Add,
+                onClick = onNavigateToProduct
             )
         }
     }
@@ -93,7 +91,8 @@ fun MenuButton(
             .height(100.dp),
         shape = RoundedCornerShape(20.dp),
         colors = ButtonDefaults.buttonColors(
-            contentColor = Color(0xFFE6A4B4)
+            // ZMIANA TUTAJ: containerColor ustawia tło przycisku
+            containerColor = Color(0xFFE6A4B4)
         )
     ) {
         Row(
@@ -125,10 +124,3 @@ fun MenuButton(
     }
 }
 
-@Preview(showBackground = true)
-@Composable
-fun MainMenuScreenPreview() {
-    DzialajProszeLodowkaTheme {
-        MainMenuScreen({},{}, {}, {})
-    }
-}

@@ -1,9 +1,9 @@
 package com.example.dzialajproszelodowka.ui.start
 
-// Wszystkie importy, które były w MainActivity, a są potrzebne tutaj
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -60,10 +60,16 @@ fun StartScreen(
             modifier = Modifier.size(250.dp)
         )
 
-        Button(onClick = {
-            onNavigateToMenu()
-        }) {
-            Text(text = "Sprawdź lodówkę")
+        Button(
+            onClick = {
+                onNavigateToMenu()
+            },
+            colors = ButtonDefaults.buttonColors(
+                containerColor = Color(0xFFE6A4B4),
+                contentColor = Color.Black
+            )
+        ) {
+            Text(text = "Get started!")
         }
     }
 }

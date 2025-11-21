@@ -1,21 +1,22 @@
 package com.example.dzialajproszelodowka.ui.fridge
 
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.PathEffect
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -32,41 +33,42 @@ import java.util.Date
 import java.util.Locale
 import java.util.concurrent.TimeUnit
 
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FridgeListScreen(
     viewModel: FridgeViewModel,
     onNavigateBack: () -> Unit
 ) {
-    // zbieram aktualną listę produktów z viewModel
     val products by viewModel.allProduct.collectAsState()
 
-    // scaffold - gotowy layout
+    var showEditDialog by remember { mutableStateOf(false) }
+    var selectedProduct by remember { mutableStateOf<Product?>(null) }
+
     Scaffold(
         topBar = {
             TopAppBar(
                 title = { Text("Your fridge:") },
                 navigationIcon = {
-                    // przycisk cofania do menu
                     IconButton(onClick = onNavigateBack) {
                         Icon(Icons.Filled.ArrowBack, contentDescription = "Back")
-                    }
+                      }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = Color(0xFFFCEEEE)
+                    containerColor = Color(0xFFFCEEEE),
+                    titleContentColor = Color.Black,
+                    navigationIconContentColor = Color.Black
                 )
             )
         },
         containerColor = Color(0xFFFCEEEE)
     ) { padding ->
-        // przewijalna lista elementów
+
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(padding) // dzięki temu lista jest pod nagłówkiem
+                .padding(padding)
                 .padding(horizontal = 16.dp),
-            verticalArrangement = Arrangement.spacedBy(10.dp) // odstępy między elementami
+            verticalArrangement = Arrangement.spacedBy(10.dp)
         ) {
 
             if (products.isEmpty()) {
@@ -84,21 +86,84 @@ fun FridgeListScreen(
                 items(products, key = { it.name }) { product ->
                     ProductListItem(
                         product = product,
-                        // przycisk usuwania
-                        onDelete = { viewModel.deleteProduct(product) }
+                        onDelete = { viewModel.deleteProduct(product) },
+                        onClick = {
+                            selectedProduct = product
+                            showEditDialog = true
+                        }
                     )
                 }
             }
         }
+
+        if (showEditDialog && selectedProduct != null) {
+            EditQuantityDialog(
+                product = selectedProduct!!,
+                onDismiss = {
+                    showEditDialog = false
+                    selectedProduct = null
+                },
+                onConfirm = { newAmount ->
+                    viewModel.addProduct(
+                        name = selectedProduct!!.name,
+                        amount = newAmount,
+                        expiryDate = selectedProduct!!.expiryDate
+                    )
+                    showEditDialog = false
+                    selectedProduct = null
+                }
+            )
+        }
     }
 }
 
+@Composable
+fun EditQuantityDialog(
+    product: Product,
+    onDismiss: () -> Unit,
+    onConfirm: (Int) -> Unit
+) {
+    var amountText by remember { mutableStateOf(product.amount.toString()) }
 
-// funkcja pokazująca 1 produkt z lodówki
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text(text = "Edit ${product.name}") },
+        text = {
+            Column {
+                Text("Enter new quantity:")
+                Spacer(modifier = Modifier.height(8.dp))
+                OutlinedTextField(
+                    value = amountText,
+                    onValueChange = { amountText = it },
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                    singleLine = true
+                )
+            }
+        },
+        confirmButton = {
+            Button(
+                onClick = {
+                    // Zamieniamy tekst na liczbę, jeśli się nie uda, zostaje stara ilość
+                    val newAmount = amountText.toIntOrNull() ?: product.amount
+                    onConfirm(newAmount)
+                }
+            ) {
+                Text("Save")
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismiss) {
+                Text("Cancel")
+            }
+        }
+    )
+}
+
 @Composable
 fun ProductListItem(
     product: Product,
-    onDelete: () -> Unit
+    onDelete: () -> Unit,
+    onClick: () -> Unit
 ) {
     val (color, daysUntilExpiry) = getExpiryStatus(product.expiryDate)
 
@@ -106,7 +171,9 @@ fun ProductListItem(
     val formattedDate = dateFormatter.format(product.expiryDate)
 
     Card(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable(onClick = onClick),
         shape = androidx.compose.foundation.shape.RoundedCornerShape(20.dp),
         colors = CardDefaults.cardColors(containerColor = Color.White)
     ) {
@@ -116,7 +183,6 @@ fun ProductListItem(
                 .padding(horizontal = 16.dp, vertical = 20.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            // kolorowa kropka
             Canvas(modifier = Modifier.size(24.dp)) {
                 drawCircle(color = color)
             }
@@ -125,11 +191,10 @@ fun ProductListItem(
 
             Text(
                 text = "${product.amount}x ${product.name}",
-                modifier = Modifier.weight(1f), // Zajmuje dostępną przestrzeń
+                modifier = Modifier.weight(1f),
                 fontSize = 16.sp
             )
 
-            // linia oddzielająca datę
             Canvas(modifier = Modifier
                 .height(30.dp)
                 .width(1.dp)) {
@@ -147,10 +212,9 @@ fun ProductListItem(
                 text = formattedDate,
                 fontSize = 14.sp,
                 textAlign = TextAlign.End,
-                modifier = Modifier.width(90.dp) // Stała szerokość dla wyrównania
+                modifier = Modifier.width(90.dp)
             )
 
-            // przycisk usuwania
             IconButton(onClick = onDelete, modifier = Modifier.size(36.dp)) {
                 Icon(Icons.Filled.Delete, contentDescription = "Delete", tint = Color.Gray)
             }
@@ -185,3 +249,4 @@ private fun getExpiryStatus(expiryDate: Date): Pair<Color, Long> {
 
     return Pair(color, days)
 }
+

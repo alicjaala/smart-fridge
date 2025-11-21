@@ -25,7 +25,8 @@ import com.example.dzialajproszelodowka.data.model.ShoppingList
 @Composable
 fun ShoppingListsScreen(
     viewModel: ShoppingViewModel,
-    onNavigateBack: () -> Unit
+    onNavigateBack: () -> Unit,
+    onListClick: (Int) -> Unit
 ) {
     val lists by viewModel.allLists.collectAsState()
     var showAddDialog by remember { mutableStateOf(false) }
@@ -40,7 +41,9 @@ fun ShoppingListsScreen(
                     }
                 },
                 colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
-                    containerColor = Color(0xFFFCEEEE)
+                    containerColor = Color(0xFFFCEEEE),
+                    titleContentColor = Color.Black,
+                    navigationIconContentColor = Color.Black
                 )
             )
         },
@@ -55,18 +58,19 @@ fun ShoppingListsScreen(
             verticalArrangement = Arrangement.spacedBy(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            // Wyświetlamy istniejące listy
             items(lists) { list ->
-                ShoppingListCard(listName = list.name, onClick = { /* TODO: Otwórz szczegóły listy */ })
+                ShoppingListCard(
+                    listName = list.name,
+                    // Wywołujemy kliknięcie z ID listy
+                    onClick = { onListClick(list.id) }
+                )
             }
 
-            // Przycisk dodawania nowej listy (na dole listy, jak na zrzucie)
             item {
                 AddListCard(onClick = { showAddDialog = true })
             }
         }
 
-        // Okienko dialogowe do wpisania nazwy nowej listy
         if (showAddDialog) {
             var newListName by remember { mutableStateOf("") }
             AlertDialog(
@@ -99,7 +103,6 @@ fun ShoppingListsScreen(
     }
 }
 
-// Karta dla istniejącej listy (brązowa)
 @Composable
 fun ShoppingListCard(listName: String, onClick: () -> Unit) {
     Card(
@@ -108,13 +111,12 @@ fun ShoppingListCard(listName: String, onClick: () -> Unit) {
             .height(100.dp)
             .clickable(onClick = onClick),
         shape = RoundedCornerShape(30.dp),
-        colors = CardDefaults.cardColors(containerColor = Color(0xFFDDB0A9)) // Brudny róż/brąz
+        colors = CardDefaults.cardColors(containerColor = Color(0xFFDDB0A9))
     ) {
         Row(
             modifier = Modifier.fillMaxSize().padding(16.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            // Białe kółko z ikoną listy
             Box(
                 modifier = Modifier
                     .size(70.dp)
@@ -134,7 +136,6 @@ fun ShoppingListCard(listName: String, onClick: () -> Unit) {
     }
 }
 
-// Karta dla przycisku "Add new list" (taka sama, ale z plusem)
 @Composable
 fun AddListCard(onClick: () -> Unit) {
     Card(

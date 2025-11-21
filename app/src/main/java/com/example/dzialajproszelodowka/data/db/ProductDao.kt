@@ -12,21 +12,18 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface ProductDao {
 
-    @Insert(onConflict = OnConflictStrategy.IGNORE)
-    // ZMIANA NAZWY:
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertProduct(product: Product)
 
     @Update
-    suspend fun update(product: Product) // Tę zostawmy, bo jest rzadko używana
+    suspend fun update(product: Product)
 
     @Delete
-    // ZMIANA NAZWY:
     suspend fun deleteProduct(product: Product)
 
     @Query("SELECT * FROM products_table ORDER BY expiryDate ASC")
     fun getAllProducts(): Flow<List<Product>>
 
-    // Dodajmy też 'getProductByName', bo jest w Twoim starym DAO (dla kompletności)
     @Query("SELECT * FROM products_table WHERE name = :productName")
     fun getProductByName(productName: String): Flow<Product?>
 }
