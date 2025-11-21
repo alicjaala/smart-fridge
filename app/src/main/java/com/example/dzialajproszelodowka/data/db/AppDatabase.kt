@@ -6,51 +6,37 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import com.example.dzialajproszelodowka.data.model.Product
-
+import com.example.dzialajproszelodowka.data.model.ShoppingItem
+import com.example.dzialajproszelodowka.data.model.ShoppingList
 
 @Database(
-    entities = [Product::class],    // lista wszystkich encji
-    version = 1,                    // wersja bazy (idk
-    exportSchema = false            // żeby jakiegoś błędu nie było
+    entities = [Product::class, ShoppingList::class, ShoppingItem::class],
+    version = 2,
+    exportSchema = false
 )
-
 @TypeConverters(Converters::class)
+abstract class AppDatabase : RoomDatabase() {
 
-abstract class AppDatabase: RoomDatabase() {
+    abstract fun productDao(): ProductDao
+    abstract fun shoppingDao(): ShoppingDao
 
-    // room automatycznie generuje tu implementację
-    abstract fun productDao(): ProductDao;
-
-
-    // w companion object trzymamy zmienne statyczne
     companion object {
-
-        // volatile - zmienna jest zawsze widoczna w swojej najnowszej wersji
-        // singleton - przechowujemy jedną instancję bazy danych
         @Volatile
-        private var INSTANCE: AppDatabase? = null;
+        private var INSTANCE: AppDatabase? = null
 
         fun getDatabase(context: Context): AppDatabase {
-
-            val tempInstance = INSTANCE;
-            if (tempInstance != null) return tempInstance;
-
-            // zapewnie, że nie będzie próby utworzenia bazy w kilku miejscach w tym samym czasie
-            synchronized(this) {
+            return INSTANCE ?: synchronized(this) {
                 val instance = Room.databaseBuilder(
-                    context.applicationContext,         // baza będzie powiązana z całą aplikacją, a nie z ekranem
+                    context.applicationContext,
                     AppDatabase::class.java,
                     "smartfridge_database"
-                ).build()
-                INSTANCE = instance
+                )
+                    .fallbackToDestructiveMigration()
+                    .build()
 
+                INSTANCE = instance
                 return instance
             }
-
-
         }
     }
 }
-
-
-

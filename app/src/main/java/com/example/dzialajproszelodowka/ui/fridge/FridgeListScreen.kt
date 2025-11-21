@@ -185,4 +185,3 @@ private fun getExpiryStatus(expiryDate: Date): Pair<Color, Long> {
 
     return Pair(color, days)
 }
-
