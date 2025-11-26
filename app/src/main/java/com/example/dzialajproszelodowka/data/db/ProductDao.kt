@@ -8,6 +8,7 @@ import androidx.room.Query
 import androidx.room.Update
 import com.example.dzialajproszelodowka.data.model.Product
 import kotlinx.coroutines.flow.Flow
+import java.util.Date
 
 @Dao
 interface ProductDao {
@@ -26,4 +27,7 @@ interface ProductDao {
 
     @Query("SELECT * FROM products_table WHERE name = :productName")
     fun getProductByName(productName: String): Flow<Product?>
+
+    @Query("SELECT * FROM products_table WHERE expiryDate BETWEEN :from AND :to")
+    suspend fun getProductsBetweenDates(from: Date, to: Date): List<Product>
 }

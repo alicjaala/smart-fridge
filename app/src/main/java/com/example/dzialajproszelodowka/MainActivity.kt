@@ -1,10 +1,14 @@
 package com.example.dzialajproszelodowka
 
+import android.Manifest
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
 import androidx.activity.ComponentActivity
+import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Surface
@@ -18,15 +22,15 @@ import com.example.dzialajproszelodowka.ui.fridge.FridgeListScreen
 import com.example.dzialajproszelodowka.ui.fridge.FridgeViewModel
 import com.example.dzialajproszelodowka.ui.fridge.FridgeViewModelFactory
 import com.example.dzialajproszelodowka.ui.menu.MainMenuScreen
-import com.example.dzialajproszelodowka.ui.shopping.ShoppingListDetailsScreen
-import com.example.dzialajproszelodowka.ui.shopping.ShoppingListsScreen // <-- Ekran List Zakupów
-import com.example.dzialajproszelodowka.ui.shopping.ShoppingViewModel // <-- ViewModel List Zakupów
-import com.example.dzialajproszelodowka.ui.shopping.ShoppingViewModelFactory // <-- Factory List Zakupów
+import com.example.dzialajproszelodowka.ui.shopping.ShoppingListsScreen
+import com.example.dzialajproszelodowka.ui.shopping.ShoppingViewModel
+import com.example.dzialajproszelodowka.ui.shopping.ShoppingViewModelFactory
 import com.example.dzialajproszelodowka.ui.start.StartScreen
 import com.example.dzialajproszelodowka.ui.theme.DzialajProszeLodowkaTheme
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import java.util.Date
+import com.example.dzialajproszelodowka.ui.shopping.ShoppingListDetailsScreen
 
 
 class MainActivity : ComponentActivity() {
@@ -84,6 +88,28 @@ class MainActivity : ComponentActivity() {
                     shoppingViewModel = shoppingViewModel
                 )
             }
+        }
+    }
+}
+
+// --- NOWA FUNKCJA DO UPRAWNIEŃ ---
+@Composable
+fun RequestNotificationPermission() {
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+        val permissionLauncher = rememberLauncherForActivityResult(
+            contract = ActivityResultContracts.RequestPermission(),
+            onResult = { isGranted ->
+                if (isGranted) {
+                    // Uprawnienie przyznane
+                } else {
+                    // Uprawnienie odrzucone
+                }
+            }
+        )
+
+        // Uruchamiamy zapytanie przy starcie
+        LaunchedEffect(Unit) {
+            permissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
         }
     }
 }
