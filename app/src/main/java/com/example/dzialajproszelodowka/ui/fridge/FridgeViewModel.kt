@@ -15,18 +15,16 @@ import androidx.lifecycle.viewModelScope
 
 class FridgeViewModel(private val repository: ProductRepository): ViewModel() {
 
-    //stateFlow - przechowuje ostatnią wartość aktualnej listy produktów
-    // konwersja allProducts na stateflow
+
     val allProduct: StateFlow<List<Product>> = repository.allProducts.catch {
-            e -> // tu dodać błąd pobierania danych
+            e ->
     }.stateIn(
-        scope = viewModelScope,     // zarządza cyklem zadań, anuluje je, kiedy viewModel jest niszczony
+        scope = viewModelScope,
         started = kotlinx.coroutines.flow.SharingStarted.WhileSubscribed(5000),
         initialValue = emptyList()
     )
 
 
-    // launch uruchamia nowe zadania w tle
     fun addProduct(name: String, amount: Int, expiryDate: Date) {
         viewModelScope.launch {
             val newProduct = Product(name = name, amount = amount, expiryDate = expiryDate)

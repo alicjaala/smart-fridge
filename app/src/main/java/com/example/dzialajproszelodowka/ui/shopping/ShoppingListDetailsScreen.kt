@@ -79,8 +79,8 @@ fun ShoppingListDetailsScreen(
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .fillMaxHeight(0.9f), // Karta zajmuje 90% wysokości ekranu
-                shape = RoundedCornerShape(40.dp), // Mocno zaokrąglone rogi
+                    .fillMaxHeight(0.9f),
+                shape = RoundedCornerShape(40.dp),
                 colors = CardDefaults.cardColors(containerColor = CardColor),
                 elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
             ) {
@@ -107,7 +107,6 @@ fun ShoppingListDetailsScreen(
                             .padding(bottom = 24.dp)
                             .size(64.dp)
                             .clickable {
-                                // Usuwa całą listę i wraca
                                 viewModel.deleteCurrentList()
                                 onNavigateBack()
                             },

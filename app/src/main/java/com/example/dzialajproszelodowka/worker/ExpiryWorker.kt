@@ -25,7 +25,7 @@ class ExpiryWorker(
 
         if (expiringProducts.isNotEmpty()) {
             val productNames = expiringProducts.joinToString(", ") { it.name }
-            showNotification("Uwaga! Produkty tracą ważność", "Jutro wygasa: $productNames$")
+            showNotification("Uwaga! Produkty tracą ważność", "Jutro wygasa: $productNames")
         }
 
         return Result.success()
@@ -38,7 +38,6 @@ class ExpiryWorker(
 
         val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
-        //tworzenie kanału powiadomień
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val channel = NotificationChannel(
                 channelId,
@@ -48,7 +47,6 @@ class ExpiryWorker(
             notificationManager.createNotificationChannel(channel)
         }
 
-        //budowanie powiadomienia
         val notification = NotificationCompat.Builder(context, channelId)
             .setSmallIcon(android.R.drawable.ic_dialog_alert)
             .setContentTitle(title)

@@ -91,7 +91,6 @@ fun MenuButton(
             .height(100.dp),
         shape = RoundedCornerShape(20.dp),
         colors = ButtonDefaults.buttonColors(
-            // ZMIANA TUTAJ: containerColor ustawia tło przycisku
             containerColor = Color(0xFFE6A4B4)
         )
     ) {

@@ -22,6 +22,11 @@ import com.example.dzialajproszelodowka.ui.fridge.FridgeListScreen
 import com.example.dzialajproszelodowka.ui.fridge.FridgeViewModel
 import com.example.dzialajproszelodowka.ui.fridge.FridgeViewModelFactory
 import com.example.dzialajproszelodowka.ui.menu.MainMenuScreen
+import com.example.dzialajproszelodowka.ui.recipe.RecipeResultScreen
+import com.example.dzialajproszelodowka.ui.recipe.RecipeScreen
+import com.example.dzialajproszelodowka.ui.recipe.RecipeViewModel
+import com.example.dzialajproszelodowka.ui.recipe.RecipeViewModelFactory
+import com.example.dzialajproszelodowka.ui.shopping.ShoppingListDetailsScreen
 import com.example.dzialajproszelodowka.ui.shopping.ShoppingListsScreen
 import com.example.dzialajproszelodowka.ui.shopping.ShoppingViewModel
 import com.example.dzialajproszelodowka.ui.shopping.ShoppingViewModelFactory
@@ -30,7 +35,6 @@ import com.example.dzialajproszelodowka.ui.theme.DzialajProszeLodowkaTheme
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import java.util.Date
-import com.example.dzialajproszelodowka.ui.shopping.ShoppingListDetailsScreen
 
 
 class MainActivity : ComponentActivity() {
@@ -43,10 +47,14 @@ class MainActivity : ComponentActivity() {
         ShoppingViewModelFactory((application as FridgeApplication).shoppingRepository)
     }
 
+    private val recipeViewModel: RecipeViewModel by viewModels {
+        RecipeViewModelFactory((application as FridgeApplication).recipeRepository)
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        if (savedInstanceState == null) {
+        if (true) {
             val application = application as FridgeApplication
             val repository = application.repository
             lifecycleScope.launch {
@@ -59,8 +67,8 @@ class MainActivity : ComponentActivity() {
                 if (produktyWBazie.isEmpty()) {
                     Log.d("MOJA_BAZA", "Baza pusta. Dodaję produkty testowe...")
                     val testProducts = listOf(
-                        Product("Mleko", 1, Date(today + 2 * dayInMillis)),
-                        Product("Jajka", 12, Date(today + 7 * dayInMillis)),
+                        Product("Mleko", 1, Date(today + 1 * dayInMillis)),
+                        Product("Jajka", 12, Date(today * dayInMillis)),
                         Product("Ser żółty", 1, Date(today - 1 * dayInMillis)),
                         Product("Jogurt naturalny", 4, Date(today + 4 * dayInMillis)),
                         Product("Masło", 2, Date(today + 10 * dayInMillis)),
@@ -83,31 +91,27 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             DzialajProszeLodowkaTheme {
+                RequestNotificationPermission()
+
                 SmartFridgeApp(
                     fridgeViewModel = fridgeViewModel,
-                    shoppingViewModel = shoppingViewModel
+                    shoppingViewModel = shoppingViewModel,
+                    recipeViewModel = recipeViewModel
                 )
             }
         }
     }
 }
 
-// --- NOWA FUNKCJA DO UPRAWNIEŃ ---
 @Composable
 fun RequestNotificationPermission() {
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
         val permissionLauncher = rememberLauncherForActivityResult(
             contract = ActivityResultContracts.RequestPermission(),
             onResult = { isGranted ->
-                if (isGranted) {
-                    // Uprawnienie przyznane
-                } else {
-                    // Uprawnienie odrzucone
-                }
             }
         )
 
-        // Uruchamiamy zapytanie przy starcie
         LaunchedEffect(Unit) {
             permissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
         }
@@ -117,7 +121,8 @@ fun RequestNotificationPermission() {
 @Composable
 fun SmartFridgeApp(
     fridgeViewModel: FridgeViewModel,
-    shoppingViewModel: ShoppingViewModel
+    shoppingViewModel: ShoppingViewModel,
+    recipeViewModel: RecipeViewModel
 ) {
     var currentScreen by remember { mutableStateOf("Start") }
     val context = LocalContext.current
@@ -127,26 +132,21 @@ fun SmartFridgeApp(
         color = Color(0xFFFCEEEE)
     ) {
         when (currentScreen) {
-            // 1. START
             "Start" -> {
                 StartScreen(onNavigateToMenu = { currentScreen = "Menu" })
             }
 
-            // 2. MENU
             "Menu" -> {
                 MainMenuScreen(
                     onNavigateToFridge = { currentScreen = "FridgeList" },
                     onNavigateToShoppingList = { currentScreen = "ShoppingLists" },
-                    onNavigateToRecipe = {
-                        Toast.makeText(context, "TODO: Znajdź Przepis", Toast.LENGTH_SHORT).show()
-                    },
+                    onNavigateToRecipe = { currentScreen = "RecipeScreen" },
                     onNavigateToProduct = {
                         Toast.makeText(context, "TODO: Dodaj Produkt", Toast.LENGTH_SHORT).show()
                     }
                 )
             }
 
-            // 3. LODÓWKA (Lista)
             "FridgeList" -> {
                 FridgeListScreen(
                     viewModel = fridgeViewModel,
@@ -154,24 +154,41 @@ fun SmartFridgeApp(
                 )
             }
 
-            // 4. LISTY ZAKUPÓW (Wybór listy)
             "ShoppingLists" -> {
                 ShoppingListsScreen(
                     viewModel = shoppingViewModel,
                     onNavigateBack = { currentScreen = "Menu" },
-                    // NOWOŚĆ: Kliknięcie w listę przenosi do szczegółów
                     onListClick = { listId ->
-                        shoppingViewModel.selectList(listId) // Ustawiamy wybraną listę w ViewModel
-                        currentScreen = "ShoppingDetails" // Zmieniamy ekran
+                        shoppingViewModel.selectList(listId)
+                        currentScreen = "ShoppingDetails"
                     }
                 )
             }
 
-            // 5. SZCZEGÓŁY LISTY ZAKUPÓW (Nowy ekran)
             "ShoppingDetails" -> {
                 ShoppingListDetailsScreen(
                     viewModel = shoppingViewModel,
                     onNavigateBack = { currentScreen = "ShoppingLists" }
+                )
+            }
+
+            "RecipeScreen" -> {
+                RecipeScreen(
+                    viewModel = recipeViewModel,
+                    onNavigateBack = { currentScreen = "Menu" },
+                    onNavigateToResult = { currentScreen = "RecipeResult" }
+                )
+            }
+
+            "RecipeResult" -> {
+                val resultJson = recipeViewModel.searchResultJson.collectAsState().value
+
+                RecipeResultScreen(
+                    jsonResult = resultJson,
+                    onNavigateBack = {
+                        recipeViewModel.resetSearchState()
+                        currentScreen = "RecipeScreen"
+                    }
                 )
             }
         }
