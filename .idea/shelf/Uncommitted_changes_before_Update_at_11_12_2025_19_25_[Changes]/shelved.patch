@@ -1,0 +1,236 @@
+Index: .gitignore
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>*.iml\r\n.gradle\r\n/local.properties\r\n/.idea/caches\r\n/.idea/libraries\r\n/.idea/modules.xml\r\n/.idea/workspace.xml\r\n/.idea/navEditor.xml\r\n/.idea/assetWizardSettings.xml\r\n.DS_Store\r\n/build\r\n/captures\r\n.externalNativeBuild\r\n.cxx\r\nlocal.properties\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.gitignore b/.gitignore
+--- a/.gitignore	(revision aa7b55f61187a842e11a2f1f74c750f5c67123b3)
++++ b/.gitignore	(date 1764766868930)
+@@ -1,4 +1,5 @@
+ *.iml
++.idea
+ .gradle
+ /local.properties
+ /.idea/caches
+Index: .idea/deploymentTargetSelector.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/deploymentTargetSelector.xml b/.idea/deploymentTargetSelector.xml
+deleted file mode 100644
+--- a/.idea/deploymentTargetSelector.xml	(revision aa7b55f61187a842e11a2f1f74c750f5c67123b3)
++++ /dev/null	(revision aa7b55f61187a842e11a2f1f74c750f5c67123b3)
+@@ -1,13 +0,0 @@
+-<?xml version="1.0" encoding="UTF-8"?>
+-<project version="4">
+-  <component name="deploymentTargetSelector">
+-    <selectionStates>
+-      <SelectionState runConfigName="app">
+-        <option name="selectionMode" value="DROPDOWN" />
+-      </SelectionState>
+-      <SelectionState runConfigName="MainActivity">
+-        <option name="selectionMode" value="DROPDOWN" />
+-      </SelectionState>
+-    </selectionStates>
+-  </component>
+-</project>
+\ No newline at end of file
+Index: .idea/inspectionProfiles/Project_Default.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/inspectionProfiles/Project_Default.xml b/.idea/inspectionProfiles/Project_Default.xml
+deleted file mode 100644
+--- a/.idea/inspectionProfiles/Project_Default.xml	(revision aa7b55f61187a842e11a2f1f74c750f5c67123b3)
++++ /dev/null	(revision aa7b55f61187a842e11a2f1f74c750f5c67123b3)
+@@ -1,61 +0,0 @@
+-<component name="InspectionProjectProfileManager">
+-  <profile version="1.0">
+-    <option name="myName" value="Project Default" />
+-    <inspection_tool class="ComposePreviewDimensionRespectsLimit" enabled="true" level="WARNING" enabled_by_default="true">
+-      <option name="composableFile" value="true" />
+-      <option name="previewFile" value="true" />
+-    </inspection_tool>
+-    <inspection_tool class="ComposePreviewMustBeTopLevelFunction" enabled="true" level="ERROR" enabled_by_default="true">
+-      <option name="composableFile" value="true" />
+-      <option name="previewFile" value="true" />
+-    </inspection_tool>
+-    <inspection_tool class="ComposePreviewNeedsComposableAnnotation" enabled="true" level="ERROR" enabled_by_default="true">
+-      <option name="composableFile" value="true" />
+-      <option name="previewFile" value="true" />
+-    </inspection_tool>
+-    <inspection_tool class="ComposePreviewNotSupportedInUnitTestFiles" enabled="true" level="ERROR" enabled_by_default="true">
+-      <option name="composableFile" value="true" />
+-      <option name="previewFile" value="true" />
+-    </inspection_tool>
+-    <inspection_tool class="GlancePreviewDimensionRespectsLimit" enabled="true" level="WARNING" enabled_by_default="true">
+-      <option name="composableFile" value="true" />
+-    </inspection_tool>
+-    <inspection_tool class="GlancePreviewMustBeTopLevelFunction" enabled="true" level="ERROR" enabled_by_default="true">
+-      <option name="composableFile" value="true" />
+-    </inspection_tool>
+-    <inspection_tool class="GlancePreviewNeedsComposableAnnotation" enabled="true" level="ERROR" enabled_by_default="true">
+-      <option name="composableFile" value="true" />
+-    </inspection_tool>
+-    <inspection_tool class="GlancePreviewNotSupportedInUnitTestFiles" enabled="true" level="ERROR" enabled_by_default="true">
+-      <option name="composableFile" value="true" />
+-    </inspection_tool>
+-    <inspection_tool class="PreviewAnnotationInFunctionWithParameters" enabled="true" level="ERROR" enabled_by_default="true">
+-      <option name="composableFile" value="true" />
+-      <option name="previewFile" value="true" />
+-    </inspection_tool>
+-    <inspection_tool class="PreviewApiLevelMustBeValid" enabled="true" level="ERROR" enabled_by_default="true">
+-      <option name="composableFile" value="true" />
+-      <option name="previewFile" value="true" />
+-    </inspection_tool>
+-    <inspection_tool class="PreviewDeviceShouldUseNewSpec" enabled="true" level="WEAK WARNING" enabled_by_default="true">
+-      <option name="composableFile" value="true" />
+-      <option name="previewFile" value="true" />
+-    </inspection_tool>
+-    <inspection_tool class="PreviewFontScaleMustBeGreaterThanZero" enabled="true" level="ERROR" enabled_by_default="true">
+-      <option name="composableFile" value="true" />
+-      <option name="previewFile" value="true" />
+-    </inspection_tool>
+-    <inspection_tool class="PreviewMultipleParameterProviders" enabled="true" level="ERROR" enabled_by_default="true">
+-      <option name="composableFile" value="true" />
+-      <option name="previewFile" value="true" />
+-    </inspection_tool>
+-    <inspection_tool class="PreviewParameterProviderOnFirstParameter" enabled="true" level="ERROR" enabled_by_default="true">
+-      <option name="composableFile" value="true" />
+-      <option name="previewFile" value="true" />
+-    </inspection_tool>
+-    <inspection_tool class="PreviewPickerAnnotation" enabled="true" level="ERROR" enabled_by_default="true">
+-      <option name="composableFile" value="true" />
+-      <option name="previewFile" value="true" />
+-    </inspection_tool>
+-  </profile>
+-</component>
+\ No newline at end of file
+Index: .idea/compiler.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/compiler.xml b/.idea/compiler.xml
+deleted file mode 100644
+--- a/.idea/compiler.xml	(revision aa7b55f61187a842e11a2f1f74c750f5c67123b3)
++++ /dev/null	(revision aa7b55f61187a842e11a2f1f74c750f5c67123b3)
+@@ -1,6 +0,0 @@
+-<?xml version="1.0" encoding="UTF-8"?>
+-<project version="4">
+-  <component name="CompilerConfiguration">
+-    <bytecodeTargetLevel target="21" />
+-  </component>
+-</project>
+\ No newline at end of file
+Index: .idea/AndroidProjectSystem.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/AndroidProjectSystem.xml b/.idea/AndroidProjectSystem.xml
+deleted file mode 100644
+--- a/.idea/AndroidProjectSystem.xml	(revision aa7b55f61187a842e11a2f1f74c750f5c67123b3)
++++ /dev/null	(revision aa7b55f61187a842e11a2f1f74c750f5c67123b3)
+@@ -1,6 +0,0 @@
+-<?xml version="1.0" encoding="UTF-8"?>
+-<project version="4">
+-  <component name="AndroidProjectSystem">
+-    <option name="providerId" value="com.android.tools.idea.GradleProjectSystem" />
+-  </component>
+-</project>
+\ No newline at end of file
+Index: .idea/gradle.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/gradle.xml b/.idea/gradle.xml
+deleted file mode 100644
+--- a/.idea/gradle.xml	(revision aa7b55f61187a842e11a2f1f74c750f5c67123b3)
++++ /dev/null	(revision aa7b55f61187a842e11a2f1f74c750f5c67123b3)
+@@ -1,19 +0,0 @@
+-<?xml version="1.0" encoding="UTF-8"?>
+-<project version="4">
+-  <component name="GradleMigrationSettings" migrationVersion="1" />
+-  <component name="GradleSettings">
+-    <option name="linkedExternalProjectsSettings">
+-      <GradleProjectSettings>
+-        <option name="testRunner" value="CHOOSE_PER_TEST" />
+-        <option name="externalProjectPath" value="$PROJECT_DIR$" />
+-        <option name="gradleJvm" value="#GRADLE_LOCAL_JAVA_HOME" />
+-        <option name="modules">
+-          <set>
+-            <option value="$PROJECT_DIR$" />
+-            <option value="$PROJECT_DIR$/app" />
+-          </set>
+-        </option>
+-      </GradleProjectSettings>
+-    </option>
+-  </component>
+-</project>
+\ No newline at end of file
+Index: .idea/runConfigurations.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/runConfigurations.xml b/.idea/runConfigurations.xml
+deleted file mode 100644
+--- a/.idea/runConfigurations.xml	(revision aa7b55f61187a842e11a2f1f74c750f5c67123b3)
++++ /dev/null	(revision aa7b55f61187a842e11a2f1f74c750f5c67123b3)
+@@ -1,17 +0,0 @@
+-<?xml version="1.0" encoding="UTF-8"?>
+-<project version="4">
+-  <component name="RunConfigurationProducerService">
+-    <option name="ignoredProducers">
+-      <set>
+-        <option value="com.intellij.execution.junit.AbstractAllInDirectoryConfigurationProducer" />
+-        <option value="com.intellij.execution.junit.AllInPackageConfigurationProducer" />
+-        <option value="com.intellij.execution.junit.PatternConfigurationProducer" />
+-        <option value="com.intellij.execution.junit.TestInClassConfigurationProducer" />
+-        <option value="com.intellij.execution.junit.UniqueIdConfigurationProducer" />
+-        <option value="com.intellij.execution.junit.testDiscovery.JUnitTestDiscoveryConfigurationProducer" />
+-        <option value="org.jetbrains.kotlin.idea.junit.KotlinJUnitRunConfigurationProducer" />
+-        <option value="org.jetbrains.kotlin.idea.junit.KotlinPatternConfigurationProducer" />
+-      </set>
+-    </option>
+-  </component>
+-</project>
+\ No newline at end of file
+Index: .idea/misc.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/misc.xml b/.idea/misc.xml
+deleted file mode 100644
+--- a/.idea/misc.xml	(revision aa7b55f61187a842e11a2f1f74c750f5c67123b3)
++++ /dev/null	(revision aa7b55f61187a842e11a2f1f74c750f5c67123b3)
+@@ -1,4 +0,0 @@
+-<project version="4">
+-  <component name="ExternalStorageConfigurationManager" enabled="true" />
+-  <component name="ProjectRootManager" version="2" languageLevel="JDK_21" default="true" project-jdk-name="jbr-21" project-jdk-type="JavaSDK" />
+-</project>
+\ No newline at end of file
+Index: .idea/vcs.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/vcs.xml b/.idea/vcs.xml
+deleted file mode 100644
+--- a/.idea/vcs.xml	(revision aa7b55f61187a842e11a2f1f74c750f5c67123b3)
++++ /dev/null	(revision aa7b55f61187a842e11a2f1f74c750f5c67123b3)
+@@ -1,6 +0,0 @@
+-<?xml version="1.0" encoding="UTF-8"?>
+-<project version="4">
+-  <component name="VcsDirectoryMappings">
+-    <mapping directory="$PROJECT_DIR$" vcs="Git" />
+-  </component>
+-</project>
+\ No newline at end of file
