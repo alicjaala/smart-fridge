@@ -115,4 +115,11 @@ dependencies {
 
     // ML Kit (Skaner kodów kreskowych)
     implementation("com.google.mlkit:barcode-scanning:$mlkit_version")
+
+    // CameraX (Kamera)
+    val camerax_version = "1.3.4"
+    implementation("androidx.camera:camera-camera2:$camerax_version")
+    implementation("androidx.camera:camera-lifecycle:$camerax_version")
+    implementation("androidx.camera:camera-view:$camerax_version")
+
 }

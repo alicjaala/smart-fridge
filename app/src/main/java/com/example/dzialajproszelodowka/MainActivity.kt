@@ -10,14 +10,31 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.CameraAlt
+import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Icon
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.lifecycleScope
 import com.example.dzialajproszelodowka.data.model.Product
+import com.example.dzialajproszelodowka.data.repository.BarcodeRepository
+import com.example.dzialajproszelodowka.ui.fridge.AddProductScreen
 import com.example.dzialajproszelodowka.ui.fridge.FridgeListScreen
 import com.example.dzialajproszelodowka.ui.fridge.FridgeViewModel
 import com.example.dzialajproszelodowka.ui.fridge.FridgeViewModelFactory
@@ -26,14 +43,17 @@ import com.example.dzialajproszelodowka.ui.recipe.RecipeResultScreen
 import com.example.dzialajproszelodowka.ui.recipe.RecipeScreen
 import com.example.dzialajproszelodowka.ui.recipe.RecipeViewModel
 import com.example.dzialajproszelodowka.ui.recipe.RecipeViewModelFactory
+import com.example.dzialajproszelodowka.ui.scanner.BarcodeScannerScreen
 import com.example.dzialajproszelodowka.ui.shopping.ShoppingListDetailsScreen
 import com.example.dzialajproszelodowka.ui.shopping.ShoppingListsScreen
 import com.example.dzialajproszelodowka.ui.shopping.ShoppingViewModel
 import com.example.dzialajproszelodowka.ui.shopping.ShoppingViewModelFactory
 import com.example.dzialajproszelodowka.ui.start.StartScreen
 import com.example.dzialajproszelodowka.ui.theme.DzialajProszeLodowkaTheme
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.util.Date
 
 
@@ -50,6 +70,8 @@ class MainActivity : ComponentActivity() {
     private val recipeViewModel: RecipeViewModel by viewModels {
         RecipeViewModelFactory((application as FridgeApplication).recipeRepository)
     }
+
+    private val barcodeRepository = BarcodeRepository()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -96,7 +118,8 @@ class MainActivity : ComponentActivity() {
                 SmartFridgeApp(
                     fridgeViewModel = fridgeViewModel,
                     shoppingViewModel = shoppingViewModel,
-                    recipeViewModel = recipeViewModel
+                    recipeViewModel = recipeViewModel,
+                    barcodeRepository = barcodeRepository
                 )
             }
         }
@@ -122,10 +145,28 @@ fun RequestNotificationPermission() {
 fun SmartFridgeApp(
     fridgeViewModel: FridgeViewModel,
     shoppingViewModel: ShoppingViewModel,
-    recipeViewModel: RecipeViewModel
+    recipeViewModel: RecipeViewModel,
+    barcodeRepository: BarcodeRepository
 ) {
     var currentScreen by remember { mutableStateOf("Start") }
     val context = LocalContext.current
+    val scope = rememberCoroutineScope()
+
+    var newProductName by remember { mutableStateOf("") }
+    var showAddOptionsDialog by remember { mutableStateOf(false) }
+    var showManualInputDialog by remember { mutableStateOf(false) }
+    var isFetchingProductInfo by remember { mutableStateOf(false) }
+
+    val cameraPermissionLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestPermission(),
+        onResult = { isGranted ->
+            if (isGranted) {
+                currentScreen = "BarcodeScanner"
+            } else {
+                Toast.makeText(context, "Camera permission needed to scan", Toast.LENGTH_SHORT).show()
+            }
+        }
+    )
 
     Surface(
         modifier = Modifier.fillMaxSize(),
@@ -141,9 +182,7 @@ fun SmartFridgeApp(
                     onNavigateToFridge = { currentScreen = "FridgeList" },
                     onNavigateToShoppingList = { currentScreen = "ShoppingLists" },
                     onNavigateToRecipe = { currentScreen = "RecipeScreen" },
-                    onNavigateToProduct = {
-                        Toast.makeText(context, "TODO: Dodaj Produkt", Toast.LENGTH_SHORT).show()
-                    }
+                    onNavigateToProduct = { showAddOptionsDialog = true }
                 )
             }
 
@@ -191,6 +230,114 @@ fun SmartFridgeApp(
                     }
                 )
             }
+
+            "BarcodeScanner" -> {
+                BarcodeScannerScreen(
+                    onBarcodeDetected = { barcode ->
+                        isFetchingProductInfo = true
+                        currentScreen = "Menu"
+
+                        scope.launch {
+                            val name = withContext(Dispatchers.IO) {
+                                barcodeRepository.getProductName(barcode)
+                            }
+
+                            isFetchingProductInfo = false
+
+                            if (name != null) {
+                                newProductName = name as String
+                                currentScreen = "AddProduct"
+                            } else {
+                                Toast.makeText(context, "Product not found. Try manually.", Toast.LENGTH_SHORT).show()
+                                showManualInputDialog = true
+                            }
+                        }
+                    },
+                    onCancel = { currentScreen = "Menu" }
+                )
+            }
+
+            "AddProduct" -> {
+                AddProductScreen(
+                    productName = newProductName,
+                    viewModel = fridgeViewModel,
+                    onNavigateBack = { currentScreen = "Menu" },
+                    onSaveSuccess = {
+                        currentScreen = "FridgeList"
+                    }
+                )
+            }
+        }
+
+
+        if (isFetchingProductInfo) {
+            AlertDialog(
+                onDismissRequest = {},
+                title = { Text("Fetching product info...") },
+                text = {
+                    Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.fillMaxWidth()) {
+                        CircularProgressIndicator()
+                    }
+                },
+                confirmButton = {}
+            )
+        }
+
+        if (showAddOptionsDialog) {
+            AlertDialog(
+                onDismissRequest = { showAddOptionsDialog = false },
+                title = { Text("Add Product") },
+                text = { Text("Choose how you want to add the product:") },
+                confirmButton = {
+                    Button(onClick = {
+                        showAddOptionsDialog = false
+                        cameraPermissionLauncher.launch(Manifest.permission.CAMERA)
+                    }) {
+                        Icon(Icons.Filled.CameraAlt, contentDescription = null)
+                        Text(" Scan Barcode", modifier = Modifier.padding(start = 8.dp))
+                    }
+                },
+                dismissButton = {
+                    Button(onClick = {
+                        showAddOptionsDialog = false
+                        showManualInputDialog = true
+                    }) {
+                        Icon(Icons.Filled.Edit, contentDescription = null)
+                        Text(" Type Manually", modifier = Modifier.padding(start = 8.dp))
+                    }
+                }
+            )
+        }
+
+        if (showManualInputDialog) {
+            var tempName by remember { mutableStateOf("") }
+            AlertDialog(
+                onDismissRequest = { showManualInputDialog = false },
+                title = { Text("Enter Name") },
+                text = {
+                    OutlinedTextField(
+                        value = tempName,
+                        onValueChange = { tempName = it },
+                        label = { Text("Product Name") }
+                    )
+                },
+                confirmButton = {
+                    Button(onClick = {
+                        if (tempName.isNotBlank()) {
+                            newProductName = tempName
+                            showManualInputDialog = false
+                            currentScreen = "AddProduct"
+                        }
+                    }) {
+                        Text("Next")
+                    }
+                },
+                dismissButton = {
+                    TextButton(onClick = { showManualInputDialog = false }) {
+                        Text("Cancel")
+                    }
+                }
+            )
         }
     }
 }
