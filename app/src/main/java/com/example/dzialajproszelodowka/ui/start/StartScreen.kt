@@ -1,5 +1,10 @@
 package com.example.dzialajproszelodowka.ui.start
 
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.Button
@@ -18,6 +23,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.dzialajproszelodowka.R
 import com.example.dzialajproszelodowka.ui.theme.DzialajProszeLodowkaTheme
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.draw.scale
+import android.media.MediaPlayer
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.runtime.remember
+import androidx.compose.ui.platform.LocalContext
 
 
 private val poppinsFamily = FontFamily(
@@ -29,6 +41,20 @@ private val poppinsFamily = FontFamily(
 fun StartScreen(
     onNavigateToMenu: () -> Unit
 ) {
+    val context = LocalContext.current
+    val infiniteTransition = rememberInfiniteTransition(label = "pulsingCat")
+
+    val scale by infiniteTransition.animateFloat(
+        initialValue = 1f,
+        targetValue = 1.15f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(1000),
+            repeatMode = RepeatMode.Reverse
+        ),
+        label = "scale"
+    )
+
+    val interactionSource = remember { MutableInteractionSource() }
 
     Column(
         modifier = Modifier.fillMaxSize(),
@@ -57,7 +83,16 @@ fun StartScreen(
         Image(
             painter = painterResource(id = R.drawable.kot),
             contentDescription = "Kotek",
-            modifier = Modifier.size(250.dp)
+            modifier = Modifier.size(250.dp).scale(scale)
+                .clickable(
+                    interactionSource = interactionSource,
+                    indication = null
+                ) {
+                    val mediaPlayer = MediaPlayer.create(context, R.raw.meow)
+                    mediaPlayer.start()
+
+                    mediaPlayer.setOnCompletionListener { mp -> mp.release() }
+                }
         )
 
         Button(

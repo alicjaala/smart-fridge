@@ -154,14 +154,13 @@ fun AddProductScreen(
                     ) {
                         Text("Expiry date:", fontSize = 18.sp, color = Color.Black, modifier = Modifier.width(100.dp))
 
-                        // To pole jest "tylko do odczytu", kliknięcie otwiera kalendarz
                         Box(
                             modifier = Modifier
                                 .weight(1f)
                                 .height(50.dp)
                                 .clip(RoundedCornerShape(15.dp))
                                 .background(Color.White)
-                                .clickable { datePickerDialog.show() }, // Otwórz kalendarz
+                                .clickable { datePickerDialog.show() },
                             contentAlignment = Alignment.CenterStart
                         ) {
                             Text(
@@ -205,8 +204,8 @@ fun AddProductScreen(
             Spacer(modifier = Modifier.weight(1f))
 
             Image(
-                painter = painterResource(id = R.drawable.kot),
-                contentDescription = "Cat",
+                painter = painterResource(id = R.drawable.shopping_bag),
+                contentDescription = "Bag",
                 modifier = Modifier.size(180.dp),
                 contentScale = ContentScale.Fit
             )

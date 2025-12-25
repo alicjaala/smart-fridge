@@ -9,9 +9,9 @@ class ShoppingRepository(private val shoppingDao: ShoppingDao) {
 
     val allLists: Flow<List<ShoppingList>> = shoppingDao.getAllLists()
 
-    suspend fun insertList(name: String) {
+    suspend fun insertList(name: String): Long {
         val newList = ShoppingList(name = name)
-        shoppingDao.insertList(newList)
+        return shoppingDao.insertList(newList)
     }
 
     suspend fun deleteList(shoppingList: ShoppingList) {

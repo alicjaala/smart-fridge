@@ -70,7 +70,8 @@ dependencies {
     implementation("androidx.compose.ui:ui")
     implementation("androidx.compose.ui:ui-graphics")
     implementation("androidx.compose.ui:ui-tooling-preview")
-    implementation("androidx.compose.material3:material3") // Material Design 3
+    implementation("androidx.compose.material3:material3")
+    implementation(libs.androidx.compose.remote.creation.core) // Material Design 3
 
     // Zależności testowe - ZAMIENIONE NA TEKST
     testImplementation("junit:junit:$junit_version")
@@ -121,5 +122,11 @@ dependencies {
     implementation("androidx.camera:camera-camera2:$camerax_version")
     implementation("androidx.camera:camera-lifecycle:$camerax_version")
     implementation("androidx.camera:camera-view:$camerax_version")
+
+    val media3_version = "1.3.1"
+    implementation("androidx.media3:media3-exoplayer:$media3_version")
+    implementation("androidx.media3:media3-ui:$media3_version")
+    implementation("androidx.media3:media3-common:$media3_version")
+
 
 }

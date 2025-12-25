@@ -1,6 +1,7 @@
 package com.example.dzialajproszelodowka.ui.fridge
 
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -16,6 +17,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.PathEffect
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -32,6 +35,7 @@ import java.util.Calendar
 import java.util.Date
 import java.util.Locale
 import java.util.concurrent.TimeUnit
+import com.example.dzialajproszelodowka.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -73,14 +77,33 @@ fun FridgeListScreen(
 
             if (products.isEmpty()) {
                 item {
-                    Text(
-                        text = "Your fridge is empty.\nGo to 'Add new product' to add something!",
+                    Column(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(top = 50.dp),
-                        textAlign = TextAlign.Center,
-                        fontSize = 18.sp
-                    )
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Image(
+                            painter = painterResource(id = R.drawable.empty_fridge),
+                            contentDescription = "Empty Fridge",
+                            modifier = Modifier
+                                .size(250.dp)
+                                .padding(bottom = 16.dp),
+                            contentScale = ContentScale.Fit
+                        )
+
+                        Text(
+                            text = "It's empty here...",
+                            color = Color.Gray,
+                            fontSize = 20.sp,
+                            fontWeight = androidx.compose.ui.text.font.FontWeight.Medium
+                        )
+                        Text(
+                            text = "Go add some products!",
+                            color = Color.Gray,
+                            fontSize = 16.sp
+                        )
+                    }
                 }
             } else {
                 items(products, key = { it.name }) { product ->

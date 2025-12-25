@@ -12,7 +12,7 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface ShoppingDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertList(shoppingList: ShoppingList)
+    suspend fun insertList(shoppingList: ShoppingList): Long
 
     @Delete
     suspend fun deleteList(shoppingList: ShoppingList)

@@ -68,7 +68,9 @@ class MainActivity : ComponentActivity() {
     }
 
     private val recipeViewModel: RecipeViewModel by viewModels {
-        RecipeViewModelFactory((application as FridgeApplication).recipeRepository)
+        RecipeViewModelFactory((application as FridgeApplication).recipeRepository,
+            (application as FridgeApplication).shoppingRepository,
+            (application as FridgeApplication).repository)
     }
 
     private val barcodeRepository = BarcodeRepository()
@@ -227,7 +229,8 @@ fun SmartFridgeApp(
                     onNavigateBack = {
                         recipeViewModel.resetSearchState()
                         currentScreen = "RecipeScreen"
-                    }
+                    },
+                    viewModel = recipeViewModel
                 )
             }
 

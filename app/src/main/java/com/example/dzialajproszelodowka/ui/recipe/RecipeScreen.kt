@@ -1,5 +1,7 @@
 package com.example.dzialajproszelodowka.ui.recipe
 
+import android.media.browse.MediaBrowser
+import android.net.Uri
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -16,6 +18,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -24,6 +27,11 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.viewinterop.AndroidView
+import androidx.media3.common.MediaItem
+import androidx.media3.common.util.UnstableApi
+import androidx.media3.exoplayer.ExoPlayer
+import androidx.media3.ui.PlayerView
 import com.example.dzialajproszelodowka.R
 import com.example.dzialajproszelodowka.data.api.RetrofitClient
 import com.example.dzialajproszelodowka.data.repository.RecipeRepository
@@ -127,7 +135,6 @@ fun RecipeScreen(
                             unfocusedIndicatorColor = Color.Transparent
                         ),
                         singleLine = true,
-                        // Obsługa klawiatury
                         keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
                         keyboardActions = KeyboardActions(
                             onSearch = {
@@ -155,12 +162,42 @@ fun RecipeScreen(
                 }
             }
 
-            Image(
-                painter = painterResource(id = R.drawable.kot),
-                contentDescription = "Cat",
-                modifier = Modifier.size(150.dp),
-                contentScale = ContentScale.Fit
-            )
+            Button(
+                onClick = {
+                    viewModel.searchWithFridgeIngredients()
+                    keyboardController?.hide()
+                },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(60.dp),
+                shape = RoundedCornerShape(30.dp),
+                colors = ButtonDefaults.buttonColors(containerColor = ElementColor)
+            ) {
+                Text(
+                    text = "Cook with what's in fridge!",
+                    color = Color.Black,
+                    fontSize = 16.sp
+                )
+            }
+
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(220.dp),
+                shape = RoundedCornerShape(20.dp),
+                colors = CardDefaults.cardColors(containerColor = Color.Black)
+            ) {
+                VideoPlayer(videoResId = R.raw.eating_cat)
+            }
+
+
+
+//            Image(
+//                painter = painterResource(id = R.drawable.kot),
+//                contentDescription = "Cat",
+//                modifier = Modifier.size(150.dp),
+//                contentScale = ContentScale.Fit
+//            )
 
             if (jsonResult.isNotEmpty() && !jsonResult.startsWith("Enter keywords") && !jsonResult.startsWith("Searching")) {
                 TextButton(onClick = { onNavigateToResult() }) {
@@ -173,16 +210,34 @@ fun RecipeScreen(
     }
 }
 
-@Preview(showBackground = true)
+@androidx.annotation.OptIn(UnstableApi::class)
+@OptIn(UnstableApi::class)
 @Composable
-fun RecipeScreenPreview() {
-    DzialajProszeLodowkaTheme {
-        val fakeRepo = RecipeRepository(RetrofitClient.api)
-        val fakeVM = RecipeViewModel(fakeRepo)
-        RecipeScreen(
-            viewModel = fakeVM,
-            onNavigateBack = {},
-            onNavigateToResult = {}
-        )
+fun VideoPlayer(videoResId: Int) {
+    val context = LocalContext.current
+
+    val exoPlayer = remember {
+        ExoPlayer.Builder(context).build().apply {
+            val uri = Uri.parse("android.resource://${context.packageName}/$videoResId")
+            val mediaItem = MediaItem.fromUri(uri)
+            setMediaItem(mediaItem)
+            prepare()
+            playWhenReady = false
+        }
     }
+
+    DisposableEffect(Unit) {
+        onDispose { exoPlayer.release() }
+    }
+
+    AndroidView(
+        factory = {
+            PlayerView(context).apply {
+                player = exoPlayer
+                useController = true
+            }
+        },
+        modifier = Modifier.fillMaxSize()
+    )
 }
+

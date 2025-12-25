@@ -1,25 +1,20 @@
 package com.example.dzialajproszelodowka.ui.menu
 
-import android.widget.Toast
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Kitchen
-import androidx.compose.material.icons.filled.RestaurantMenu
-import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.dzialajproszelodowka.ui.theme.DzialajProszeLodowkaTheme
+import com.example.dzialajproszelodowka.R
 
 @Composable
 fun MainMenuScreen(
@@ -47,23 +42,25 @@ fun MainMenuScreen(
 
             MenuButton(
                 text = "Check what's in your fridge.",
-                icon = Icons.Filled.Kitchen,
-                onClick = onNavigateToFridge
+                imageResId = R.drawable.menu_fridge,
+                onClick = onNavigateToFridge,
+                imageScale = 2f
             )
 
             Spacer(modifier = Modifier.height(20.dp))
 
             MenuButton(
                 text = "Make a shopping list.",
-                icon = Icons.Filled.ShoppingCart,
-                onClick = onNavigateToShoppingList
+                imageResId = R.drawable.menu_list,
+                onClick = onNavigateToShoppingList,
+                imageScale = 2f
             )
 
             Spacer(modifier = Modifier.height(20.dp))
 
             MenuButton(
                 text = "Find a recipe.",
-                icon = Icons.Filled.RestaurantMenu,
+                imageResId = R.drawable.menu_chef,
                 onClick = onNavigateToRecipe
             )
 
@@ -71,8 +68,9 @@ fun MainMenuScreen(
 
             MenuButton(
                 text = "Add new product.",
-                icon = Icons.Filled.Add,
-                onClick = onNavigateToProduct
+                imageResId = R.drawable.menu_add,
+                onClick = onNavigateToProduct,
+                imageScale = 2f
             )
         }
     }
@@ -81,8 +79,9 @@ fun MainMenuScreen(
 @Composable
 fun MenuButton(
     text: String,
-    icon: ImageVector,
-    onClick: () -> Unit
+    imageResId: Int,
+    onClick: () -> Unit,
+    imageScale: Float = 1f
 ) {
     Button(
         onClick = onClick,
@@ -104,11 +103,13 @@ fun MenuButton(
                 color = Color.White,
                 modifier = Modifier.size(70.dp)
             ) {
-                Icon(
-                    imageVector = icon,
+                Image(
+                    painter = painterResource(id = imageResId),
                     contentDescription = text,
-                    tint = Color.Black,
-                    modifier = Modifier.padding(16.dp)
+                    modifier = Modifier
+                        .padding(12.dp)
+                        .scale(imageScale),
+                    contentScale = ContentScale.Fit
                 )
             }
 
@@ -122,4 +123,3 @@ fun MenuButton(
         }
     }
 }
-
