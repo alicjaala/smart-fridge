@@ -16,7 +16,7 @@ SmartFridge is an Android mobile application designed to help users manage food 
 
 ### 🔔 Expiration Notifications
 - Automatic reminders for products nearing their expiration date
-- Implemented using **WorkManager** or **AlarmManager**
+- Implemented using **WorkManager**
 - Example notification:
   > *"Yellow cheese expires tomorrow!"*
 
