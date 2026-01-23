@@ -39,8 +39,12 @@ fun RecipeResultScreen(
 ) {
     val context = LocalContext.current
 
+
+    // toast - powiadomienie, które pojawia się na krótko i znika
     val message by viewModel?.message?.collectAsState() ?: remember { mutableStateOf(null) }
 
+    // to wykonuje się za każdym razem gdy message się zmieni
+    // tworzy toast z tekstem
     LaunchedEffect(message) {
         message?.let {
             Toast.makeText(context, it, Toast.LENGTH_SHORT).show()
@@ -48,6 +52,7 @@ fun RecipeResultScreen(
         }
     }
 
+    // parsowanie jsonu na obiekt
     val recipe = remember(jsonResult) {
         try {
             val response = Gson().fromJson(jsonResult, RecipeListResponse::class.java)
@@ -163,6 +168,7 @@ fun RecipeResultScreen(
         }
 
         if (showIngredientsSheet && recipe != null) {
+            // panel wysuwany z dołu
             ModalBottomSheet(
                 onDismissRequest = { showIngredientsSheet = false },
                 containerColor = Color.White

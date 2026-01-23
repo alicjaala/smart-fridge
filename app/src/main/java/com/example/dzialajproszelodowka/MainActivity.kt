@@ -78,7 +78,7 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        if (true) {
+        if (savedInstanceState == null) {
             val application = application as FridgeApplication
             val repository = application.repository
             lifecycleScope.launch {
@@ -91,21 +91,9 @@ class MainActivity : ComponentActivity() {
                 if (produktyWBazie.isEmpty()) {
                     Log.d("MOJA_BAZA", "Baza pusta. Dodaję produkty testowe...")
                     val testProducts = listOf(
-                        Product("Mleko", 1, Date(today + 1 * dayInMillis)),
-                        Product("Jajka", 12, Date(today * dayInMillis)),
-                        Product("Ser żółty", 1, Date(today - 1 * dayInMillis)),
-                        Product("Jogurt naturalny", 4, Date(today + 4 * dayInMillis)),
-                        Product("Masło", 2, Date(today + 10 * dayInMillis)),
-                        Product("Szynka", 1, Date(today + 1 * dayInMillis)),
-                        Product("Ketchup", 1, Date(today + 60 * dayInMillis)),
-                        Product("Sałata", 1, Date(today + 2 * dayInMillis)),
-                        Product("Pomidor", 3, Date(today + 3 * dayInMillis)),
-                        Product("Ogórek", 2, Date(today + 5 * dayInMillis)),
-                        Product("Szpinak", 1, Date(today - 3 * dayInMillis)),
-                        Product("Chleb", 1, Date(today + 1 * dayInMillis)),
-                        Product("Sok pomarańczowy", 1, Date(today + 15 * dayInMillis)),
-                        Product("Kefir", 2, Date(today + 2 * dayInMillis)),
-                        Product("Parówki", 1, Date(today - 2 * dayInMillis))
+                        Product("Chicken", 1, Date(today + 1 * dayInMillis)),
+                        Product("Egg", 12, Date(today * dayInMillis)),
+                        Product("Cheese", 1, Date(today - 1 * dayInMillis))
                     )
                     testProducts.forEach { repository.insertProduct(it) }
                     Log.d("MOJA_BAZA", "Dodano ${testProducts.size} produktów.")

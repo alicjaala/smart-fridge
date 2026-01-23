@@ -1,3 +1,4 @@
+
 // Wtyczki (Plugins) - zamienione z 'alias(libs...)' na bezpośrednie 'id("...")'
 plugins {
     id("com.android.application")
@@ -127,6 +128,15 @@ dependencies {
     implementation("androidx.media3:media3-exoplayer:$media3_version")
     implementation("androidx.media3:media3-ui:$media3_version")
     implementation("androidx.media3:media3-common:$media3_version")
+
+    // do testów
+    testImplementation("io.mockk:mockk:1.13.5")
+    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.3")
+    testImplementation("junit:junit:4.13.2")
+
+    // do testów UI
+    androidTestImplementation("androidx.compose.ui:ui-test-junit4")
+    debugImplementation("androidx.compose.ui:ui-test-manifest")
 
 
 }

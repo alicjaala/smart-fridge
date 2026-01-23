@@ -14,6 +14,7 @@ import com.example.dzialajproszelodowka.data.repository.RecipeRepository
 
 
 class FridgeApplication : Application() {
+
     val database by lazy { AppDatabase.getDatabase(this) }
     val repository by lazy { ProductRepository(database.productDao()) }
     val shoppingRepository by lazy { ShoppingRepository(database.shoppingDao()) }
@@ -26,11 +27,9 @@ class FridgeApplication : Application() {
     }
 
 
-
-
     private fun setupRecurringWork() {
 
-        val workRequest = PeriodicWorkRequestBuilder<ExpiryWorker>(1, TimeUnit.MINUTES)
+        val workRequest = PeriodicWorkRequestBuilder<ExpiryWorker>(1, TimeUnit.DAYS)
             .build()
 
         WorkManager.getInstance(this).enqueueUniquePeriodicWork(

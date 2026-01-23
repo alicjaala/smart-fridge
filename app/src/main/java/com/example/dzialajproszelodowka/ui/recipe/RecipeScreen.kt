@@ -54,6 +54,8 @@ fun RecipeScreen(
 
     val keyboardController = LocalSoftwareKeyboardController.current
 
+    // efekt w odpowiedzi na zmianę wartości
+    // jeśli json się zmieni to zareaguje
     LaunchedEffect(jsonResult) {
         if (jsonResult.isNotEmpty() &&
             !jsonResult.startsWith("Enter keywords") &&
@@ -121,6 +123,7 @@ fun RecipeScreen(
 
                     Spacer(modifier = Modifier.height(16.dp))
 
+                    // pole do wpisania tekstu
                     TextField(
                         value = searchText,
                         onValueChange = { searchText = it },
@@ -217,8 +220,10 @@ fun VideoPlayer(videoResId: Int) {
     val context = LocalContext.current
 
     val exoPlayer = remember {
+        // buduje odtwarzacz video
         ExoPlayer.Builder(context).build().apply {
             val uri = Uri.parse("android.resource://${context.packageName}/$videoResId")
+            // zamieniam uri na odtwarzacz i przypisuję do mojego odtwarzacza
             val mediaItem = MediaItem.fromUri(uri)
             setMediaItem(mediaItem)
             prepare()
@@ -226,10 +231,12 @@ fun VideoPlayer(videoResId: Int) {
         }
     }
 
+    // zamyka odtwarzacz żeby nie działał w tle
     DisposableEffect(Unit) {
         onDispose { exoPlayer.release() }
     }
 
+    // dzięki temu odtwarzacz jest traktowany jako fragment UI
     AndroidView(
         factory = {
             PlayerView(context).apply {

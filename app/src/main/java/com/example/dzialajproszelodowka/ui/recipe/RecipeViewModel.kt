@@ -21,7 +21,9 @@ class RecipeViewModel(
     private val productRepository: ProductRepository
     ) : ViewModel() {
 
+        // zmienna którą mogę tutaj modyfikować
     private val _searchResultJson = MutableStateFlow("Enter keywords to search for a recipe...")
+    // niemutowalne dla UI
     val searchResultJson: StateFlow<String> = _searchResultJson
 
     private val _isLoading = MutableStateFlow(false)
@@ -30,6 +32,7 @@ class RecipeViewModel(
     private val _message = MutableStateFlow<String?>(null)
     val message: StateFlow<String?> = _message
 
+    // szuka przepisu w api
     fun searchRecipes(query: String) {
         if (query.isBlank()) return
 

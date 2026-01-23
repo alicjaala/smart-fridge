@@ -10,6 +10,7 @@ import com.example.dzialajproszelodowka.data.model.Product
 import kotlinx.coroutines.flow.Flow
 import java.util.Date
 
+// insert, update i delete nie trzeba implementować
 @Dao
 interface ProductDao {
 

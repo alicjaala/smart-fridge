@@ -33,13 +33,17 @@ fun BarcodeScannerScreen(
     onCancel: () -> Unit
 ) {
     val context = LocalContext.current
+    // kiedy ekran żyje, żeby kamera widziała kiedy się wyłączyć
     val lifecycleOwner = LocalLifecycleOwner.current
     var isScanning by remember { mutableStateOf(true) }
 
     Box(modifier = Modifier.fillMaxSize()) {
         if (isScanning) {
+            // AndroidView, bo w Compose nie ma kamery
             AndroidView(
+                // funckaj tworząca widok kamery
                 factory = { ctx ->
+                    // ekran z aparatem
                     val previewView = PreviewView(ctx).apply {
                         layoutParams = ViewGroup.LayoutParams(
                             ViewGroup.LayoutParams.MATCH_PARENT,
@@ -47,20 +51,28 @@ fun BarcodeScannerScreen(
                         )
                     }
 
+                    // tworzy osobny wątek dla obsługi kamery
                     val cameraExecutor = Executors.newSingleThreadExecutor()
+                    // zapytanie czy można użyć kamery
                     val cameraProviderFuture = ProcessCameraProvider.getInstance(ctx)
 
+                    // to się wykona jak kamera będzie gotowa
                     cameraProviderFuture.addListener({
+                        // kontrola nad kamerą, włącza wyłącza podgląd itd
                         val cameraProvider = cameraProviderFuture.get()
 
+                        // pokazuje widok z kamery na ekranie
                         val preview = Preview.Builder().build().also {
                             it.setSurfaceProvider(previewView.surfaceProvider)
                         }
 
                         val imageAnalyzer = ImageAnalysis.Builder()
+                            // analizuj tylko najnowszą klatkę
                             .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
                             .build()
                             .also { analysis ->
+                                // dla każdej klatki sprawdza w ML Kit czy jest tu kod kreskowy
+                                // przekazuje ten kod kreskowy do odpowiedniej funkcji
                                 analysis.setAnalyzer(cameraExecutor, { imageProxy ->
                                     processImageProxy(imageProxy) { barcode ->
                                         if (isScanning) {
@@ -74,15 +86,15 @@ fun BarcodeScannerScreen(
                         val cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
 
                         try {
-                            cameraProvider.unbindAll()
-                            cameraProvider.bindToLifecycle(
-                                lifecycleOwner,
+                            cameraProvider.unbindAll() // odpina poprzednie usecasy kamery
+                            cameraProvider.bindToLifecycle( // podłącza kamerę do cyklu życia ekranu
+                                lifecycleOwner, // żeby kamera sama się włączała
                                 cameraSelector,
                                 preview,
-                                imageAnalyzer
+                                imageAnalyzer // analiza kodów
                             )
                         } catch (exc: Exception) {
-                            Log.e("Scanner", "Błąd kamery", exc)
+                            Log.e("Scanner", "Camera error", exc)
                         }
                     }, ContextCompat.getMainExecutor(ctx))
 
@@ -103,15 +115,18 @@ fun BarcodeScannerScreen(
     }
 }
 
+// analiza pojedynczej klatki z kamery
 @OptIn(ExperimentalGetImage::class)
 private fun processImageProxy(
     imageProxy: ImageProxy,
     onBarcodeFound: (String) -> Unit
 ) {
     @androidx.camera.core.ExperimentalGetImage
-    val mediaImage = imageProxy.image
+    val mediaImage = imageProxy.image // pobiera obraz
     if (mediaImage != null) {
+        // tworzy format wymagany przez ml kit
         val image = InputImage.fromMediaImage(mediaImage, imageProxy.imageInfo.rotationDegrees)
+        // pobiera skaner z ml kit
         val scanner = BarcodeScanning.getClient()
 
         scanner.process(image)

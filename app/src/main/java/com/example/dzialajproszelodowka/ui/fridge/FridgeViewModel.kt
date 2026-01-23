@@ -18,14 +18,16 @@ class FridgeViewModel(private val repository: ProductRepository): ViewModel() {
 
     val allProduct: StateFlow<List<Product>> = repository.allProducts.catch {
             e ->
-    }.stateIn(
+    }.stateIn( // konwertuje Flow na StateFlow, który będzie pamiętał ostatnią wartość
         scope = viewModelScope,
+        // flow jest aktywny dopóki ktoś go obserwuje
         started = kotlinx.coroutines.flow.SharingStarted.WhileSubscribed(5000),
         initialValue = emptyList()
     )
 
 
     fun addProduct(name: String, amount: Int, expiryDate: Date) {
+        // launch tworzy funkcję działającą w tle
         viewModelScope.launch {
             val newProduct = Product(name = name, amount = amount, expiryDate = expiryDate)
             repository.insertProduct(newProduct)

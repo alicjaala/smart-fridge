@@ -6,6 +6,7 @@ import retrofit2.http.Query
 
 interface SpoonacularApi {
 
+    // tu buduję zapytanie get do wyszukiwania przepisów
     @GET("recipes/complexSearch")
     suspend fun searchRecipes(
         @Query("query") query: String,

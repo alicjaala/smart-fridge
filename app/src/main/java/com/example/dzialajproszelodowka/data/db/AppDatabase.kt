@@ -9,6 +9,7 @@ import com.example.dzialajproszelodowka.data.model.Product
 import com.example.dzialajproszelodowka.data.model.ShoppingItem
 import com.example.dzialajproszelodowka.data.model.ShoppingList
 
+
 @Database(
     entities = [Product::class, ShoppingList::class, ShoppingItem::class],
     version = 2,

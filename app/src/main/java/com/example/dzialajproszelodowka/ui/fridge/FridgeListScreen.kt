@@ -67,6 +67,7 @@ fun FridgeListScreen(
         containerColor = Color(0xFFFCEEEE)
     ) { padding ->
 
+        // lista przewijalna
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
@@ -106,6 +107,7 @@ fun FridgeListScreen(
                     }
                 }
             } else {
+                // dla każdego produktu tworzony jest element listy
                 items(products, key = { it.name }) { product ->
                     ProductListItem(
                         product = product,
@@ -128,6 +130,7 @@ fun FridgeListScreen(
                 },
                 onConfirm = { newAmount ->
                     viewModel.addProduct(
+                        // !! - zapewniam że ta zmienna nie jest null
                         name = selectedProduct!!.name,
                         amount = newAmount,
                         expiryDate = selectedProduct!!.expiryDate
@@ -166,7 +169,6 @@ fun EditQuantityDialog(
         confirmButton = {
             Button(
                 onClick = {
-                    // Zamieniamy tekst na liczbę, jeśli się nie uda, zostaje stara ilość
                     val newAmount = amountText.toIntOrNull() ?: product.amount
                     onConfirm(newAmount)
                 }
@@ -206,6 +208,7 @@ fun ProductListItem(
                 .padding(horizontal = 16.dp, vertical = 20.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
+            // canvas żeby dynamicznie stworzyć zmieniające kolor kółko
             Canvas(modifier = Modifier.size(24.dp)) {
                 drawCircle(color = color)
             }

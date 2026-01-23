@@ -1,5 +1,6 @@
 package com.example.dzialajproszelodowka.data.model
 
+// dto opisuje jak wyglądają jsony które dostarcza api
 data class RecipeListResponse(
     val results: List<RecipeDto>
 )
